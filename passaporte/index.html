@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Passaporte da Feira</title>
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <main class="pagina">
+    <header class="capa">
+      <p class="selo-topo">PASSAPORTE</p>
+      <h1 id="nome-feira">Feira de Empreendedorismo</h1>
+      <p id="info-feira" class="info"></p>
+      <div class="progresso">
+        <div class="barra"><div id="barra-preenchida"></div></div>
+        <p id="texto-progresso"></p>
+      </div>
+    </header>
+
+    <section class="cartao">
+      <h2>Seus selos</h2>
+      <p id="proximo-selo" class="dica"></p>
+      <div id="selos" class="selos"></div>
+      <div id="votacao"></div>
+    </section>
+
+    <section>
+      <h2>Seus carimbos</h2>
+      <p class="dica">Visite as bancas e escaneie o QR Code de cada uma para ganhar o carimbo. Toque em um espaço para ver a banca.</p>
+      <div id="grade" class="grade"></div>
+    </section>
+
+    <section class="cartao">
+      <h2>A câmera não leu o QR?</h2>
+      <form id="form-codigo" class="form-codigo">
+        <input id="campo-codigo" type="text" maxlength="8" placeholder="Código da banca (ex.: MK7P)" autocomplete="off" autocapitalize="characters" aria-label="Código da banca">
+        <button type="submit">Carimbar</button>
+      </form>
+      <p id="msg-codigo" class="msg" role="status"></p>
+    </section>
+
+    <section class="cartao">
+      <h2>Como funciona</h2>
+      <ol class="passos">
+        <li>Passe pelas bancas da feira.</li>
+        <li>Escaneie o QR Code da mesa com a câmera do celular.</li>
+        <li>A cada etapa você desbloqueia um selo novo. Visite <strong>todas</strong> as bancas para ganhar o selo especial!</li>
+      </ol>
+    </section>
+
+    <footer class="rodape">
+      <p>Dados das bancas ilustrativos (protótipo).</p>
+      <p>Seus carimbos ficam salvos apenas neste celular.</p>
+      <button id="btn-reiniciar" class="link">Reiniciar passaporte</button>
+      <nav id="links-apresentacao" class="links-apresentacao" hidden>
+        <strong>Apresentação:</strong>
+        <a id="link-demo" href="?demo=1">Modo demonstração</a>
+        <a href="qrcodes.html">Cartazes com QR Codes</a>
+      </nav>
+    </footer>
+  </main>
+
+  <dialog id="modal">
+    <div id="modal-conteudo"></div>
+    <button id="modal-fechar" class="botao-secundario">Fechar</button>
+  </dialog>
+
+  <script src="dados.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QR Codes do Passaporte</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #f6f1e7;
+      color: #2b2620;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .topo { max-width: 900px; margin: 0 auto 16px; }
+    .topo p { margin: 4px 0; }
+    .alerta { background: #fff3cd; border: 1px solid #f0d68a; border-radius: 10px; padding: 10px; }
+    .topo label { display: block; margin-top: 12px; font-weight: 600; }
+    .topo input { width: 100%; padding: 8px; font: inherit; margin: 4px 0 8px; }
+    button { font: inherit; font-weight: 600; padding: 8px 16px; border: 0; border-radius: 8px; background: #1f4e79; color: #fff; cursor: pointer; }
+    .folhas {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .cartaz {
+      background: #fff;
+      border: 3px solid var(--cor);
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      break-inside: avoid;
+    }
+    .cartaz .emoji { font-size: 2.5rem; }
+    .cartaz h2 { margin: 4px 0; color: var(--cor); }
+    .cartaz .qr { display: flex; justify-content: center; margin: 12px 0; }
+    .cartaz .chamada { font-weight: 700; margin: 0; }
+    .cartaz .codigo { margin: 6px 0 0; font-size: 0.9rem; color: #555; }
+    .cartaz .codigo strong { font-family: monospace; font-size: 1.1rem; letter-spacing: 0.1em; }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .topo { display: none; }
+      .folhas { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topo">
+    <p><a href="index.html">← Voltar ao passaporte</a> · <a href="index.html?demo=1">Modo demonstração</a></p>
+    <h1>QR Codes do Passaporte</h1>
+    <p>Imprima e coloque cada cartaz na mesa da banca. O cartaz "Entrada" fica no acesso ao pátio.</p>
+    <p id="alerta" class="alerta" hidden>Esta página foi aberta direto do computador (file://). Os QR Codes só funcionam no celular depois que o site estiver publicado. Informe abaixo o endereço publicado.</p>
+    <label for="base">Endereço do passaporte publicado (vazio = endereço desta página)</label>
+    <input id="base" type="url" placeholder="Insira a URL válida do QR Code">
+    <button id="gerar">Gerar QR Codes</button>
+    <button id="imprimir">Imprimir</button>
+  </div>
+
+  <div id="folhas" class="folhas"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="dados.js"></script>
+  <script>
+    const F = window.FEIRA;
+    const campoBase = document.getElementById("base");
+
+    // Campo vazio = usa o endereço desta própria página (sem o qrcodes.html).
+    const padrao = location.href.split("?")[0].replace(/qrcodes\.html$/, "");
+    const abertoLocal = location.protocol === "file:";
+    if (abertoLocal) document.getElementById("alerta").hidden = false;
+
+    function linkPara(codigo) {
+      let base = campoBase.value.trim() || padrao;
+      if (!base.endsWith("/") && !base.endsWith(".html")) base += "/";
+      return codigo ? `${base}?c=${codigo}` : base;
+    }
+
+    function cartaz({ emoji, nome, cor, chamada, codigo }) {
+      const div = document.createElement("div");
+      div.className = "cartaz";
+      div.style.setProperty("--cor", cor);
+      div.innerHTML = `
+        <div class="emoji">${emoji}</div>
+        <h2>${nome}</h2>
+        <div class="qr"></div>
+        <p class="chamada">${chamada}</p>
+        ${codigo ? `<p class="codigo">Câmera não leu? Digite o código <strong>${codigo}</strong></p>` : ""}`;
+      new QRCode(div.querySelector(".qr"), {
+        text: linkPara(codigo),
+        width: 180,
+        height: 180,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      return div;
+    }
+
+    function gerar() {
+      const folhas = document.getElementById("folhas");
+      folhas.innerHTML = "";
+      // Aberto do computador sem URL: QR Codes apontariam para um arquivo local, inútil no celular.
+      if (abertoLocal && !campoBase.value.trim()) {
+        folhas.innerHTML = "<p>Insira a URL do passaporte publicado e clique em <strong>Gerar QR Codes</strong>.</p>";
+        return;
+      }
+      folhas.appendChild(cartaz({
+        emoji: "🗺️",
+        nome: "Entrada",
+        cor: "#1f4e79",
+        chamada: "Pegue seu Passaporte da Feira! Junte carimbos nas bancas e desbloqueie selos."
+      }));
+      F.bancas.forEach((b) => folhas.appendChild(cartaz({
+        emoji: b.emoji,
+        nome: `${b.nome} · Mesa ${b.mesa}`,
+        cor: b.cor,
+        chamada: "Escaneie e ganhe o carimbo desta banca!",
+        codigo: b.codigo
+      })));
+    }
+
+    document.getElementById("gerar").addEventListener("click", gerar);
+    document.getElementById("imprimir").addEventListener("click", () => window.print());
+    gerar();
+  </script>
+</body>
+</html>

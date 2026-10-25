@@ -68,19 +68,20 @@ section { margin-top: 20px; }
 /* Selos */
 .selos {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
 }
 .selo {
   text-align: center;
-  padding: 10px 4px;
+  padding: 10px 2px;
+  min-width: 0;
   border-radius: 12px;
   border: 1px solid var(--borda);
   background: var(--fundo);
 }
 .selo .emoji { font-size: 1.8rem; display: block; }
 .selo .nome { font-size: 0.72rem; font-weight: 700; line-height: 1.2; display: block; margin-top: 4px; }
-.selo .requisito { font-size: 0.68rem; color: var(--suave); display: block; margin-top: 2px; }
+.selo .requisito { font-size: 0.62rem; color: var(--suave); display: block; margin-top: 2px; overflow-wrap: anywhere; }
 .selo.bloqueado .emoji { filter: grayscale(1); opacity: 0.3; }
 .selo.bloqueado .nome { color: var(--suave); }
 .selo.ganho { background: #fff8e1; border-color: #ffb300; }
